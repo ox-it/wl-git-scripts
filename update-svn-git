@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+cd $HOME/repos/mirror
+lockfile=.`basename $0`.lock
+
+if ( set -o noclobber; echo "$$" > "$lockfile") 2> /dev/null; 
+then
+   trap 'rm -f "$lockfile"; exit $?' INT TERM EXIT
+   find . -mindepth 1 -maxdepth 2 -type d -name \*.git-svn | while read dir
+   do
+	   pushd $dir 
+	   git svn fetch -q 
+	   popd 
+   done
+
+   find . -mindepth 1 -maxdepth 2 -type d -name \*?.git| while read dir
+   do
+	   pushd $dir 
+	   git fetch -q 
+	   git --bare update-server-info
+	   popd 
+   done
+   rm -f "$lockfile"
+   trap - INT TERM EXIT
+else
+   echo "Failed to acquire lockfile: $lockfile" 
+   echo "Held by PID: $(cat $lockfile)"
+fi 

@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+# Script to setup a local repo
+
+project="$1"
+local_root="$HOME/repos/local-project/"
+
+if [ -z "$1" ]; then
+	echo "Usage: `basename $0` <project>"
+	exit 1
+fi
+ 
+cd $local_root
+if [ -d "$project" ]; then
+	echo Local project $project already exists in $local_root
+	exit 1
+fi
+mkdir -p $project
+cd $project
+git --bare init --shared
+touch git-daemon-export-ok
+

@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+# Small script which only displays the output if the called program exited
+# with an error. Useful for cron.
+
+if [ -z "$1" ]; then
+	echo "Usage: $(basename $0) <program>"
+	exit 1
+fi
+
+tmpfile=$(mktemp -t $(basename $0).XXXXXX)
+trap 'rm -f "$tmpfile"; exit $?' INT TERM EXIT
+echo LOG= Executing: $* > $tmpfile
+
+# Subshell so we don't exit the script on an error
+($* >>$tmpfile 2>&1)
+retval=$?
+
+if [ $retval -ne 0 ]; then
+	echo LOG= Exit value: $retval >> $tmpfile
+	cat $tmpfile
+	exit $retval
+fi

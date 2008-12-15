@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+svn_url=$1
+if [ -z "$2" ]; then
+	basename_prefix=`basename $svn_url`
+else
+	basename_prefix="$2"
+fi
+gitsvn_basename="${basename_prefix}.git-svn"
+git_basename="${basename_prefix}.git"
+
+git_root=~git/repos
+mirror_root=$git_root/mirror
+local_version_root=$git_root/local-version
+if [ ! -d $mirror_root ]; then
+	mkdir -p $mirror_root
+	echo Created mirror root: $mirror_root
+fi
+cd $mirror_root
+if [ -d $gitsvn_basename ]; then
+	echo Local folder already exists $gitsvn_basename
+	exit 1
+fi
+if [ -d $git_basename ]; then
+	echo Local folder already exists $git_basename
+	exit 1
+fi
+
+# Should check it's standard layout if git doesn't and bail
+git svn clone -s $1 ${gitsvn_basename}-new
+mv ${gitsvn_basename}-new $gitsvn_basename
+pushd $gitsvn_basename
+src_url=$(git-config --get svn-remote.svn.url)
+src_trunk=$(git config --get svn-remote.svn.fetch| sed 's/:.*//')
+popd
+git clone --bare $gitsvn_basename $git_basename
+pushd $git_basename
+# Add in an origin link
+echo -n "[remote \"origin\"]
+  url = ../$gitsvn_basename
+  fetch = +refs/remotes/*:refs/heads/*
+" >> config
+# Make trunk the default branch
+echo "ref: refs/heads/trunk" > HEAD
+touch git-daemon-export-ok
+echo  "Clone from SVN of ${src_url}/${src_trunk}" > description
+pushd refs/heads
+ln -sf trunk master
+popd
+git fetch
+popd

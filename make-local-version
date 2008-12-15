@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+# Script to setup a local version of a mirrored project. All this does it check that the mirror
+# exists and then create a bare git repository.
+
+project="$1"
+mirror_root="$HOME/repos/mirror/"
+local_root="$HOME/repos/local-version/"
+
+if [ -z "$1" ]; then
+	echo "Usage: `basename $0` <project>"
+	exit 1
+fi
+ 
+cd $mirror_root
+if [ ! -d "$project" ]; then
+	echo Cannot find mirror of $project in $mirror_root
+	exit 1
+fi
+cd $local_root
+if [ -d "$project" ]; then
+	echo Local version of mirror $project already exists in $local_root
+	exit 1
+fi
+mkdir -p $project
+cd $project
+git --bare init --shared
+touch git-daemon-export-ok
+
