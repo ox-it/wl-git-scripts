@@ -1,11 +1,18 @@
 #!/bin/bash -e
+# Script to mirror an SVN project in git.
 
 svn_url=$1
+
+if [ -z "$1" ]; then
+	echo "Usage: `basename $0` <url> (<localname>)"
+	exit 1
+fi
 if [ -z "$2" ]; then
 	basename_prefix=`basename $svn_url`
 else
 	basename_prefix="$2"
 fi
+
 gitsvn_basename="${basename_prefix}.git-svn"
 git_basename="${basename_prefix}.git"
 
