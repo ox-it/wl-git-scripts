@@ -56,3 +56,5 @@ ln -sf trunk master
 popd
 git fetch
 popd
+echo Updating project list....
+update-project-list
