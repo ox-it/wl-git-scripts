@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export GITWEB_CONFIG="gitweb_make_index.perl"
+export GITWEB_CONFIG="/etc/gitweb_make_index.conf"
 export GATEWAY_INTERFACE="CGI/1.1"
 export HTTP_ACCEPT="*/*"
 export REQUEST_METHOD="GET"
