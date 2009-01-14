@@ -19,4 +19,4 @@ mkdir -p $project
 cd $project
 git --bare init --shared
 touch git-daemon-export-ok
-
+update-project-list
