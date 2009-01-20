@@ -6,4 +6,5 @@ export HTTP_ACCEPT="*/*"
 export REQUEST_METHOD="GET"
 export QUERY_STRING="a=project_index"
 
-perl -- /usr/lib/cgi-bin/gitweb.cgi > ~/repos/projects.txt
+perl -- /usr/lib/cgi-bin/gitweb.cgi > ~/repos/projects.txt.new
+mv -f ~/repos/projects.txt.new ~/repos/projects.txt
