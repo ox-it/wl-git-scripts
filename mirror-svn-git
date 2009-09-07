@@ -43,8 +43,9 @@ popd
 git clone --bare $gitsvn_basename $git_basename
 pushd $git_basename
 # Add in an origin link
+relative_path=`basename $gitsvn_basename`
 echo -n "[remote \"origin\"]
-  url = ../$gitsvn_basename
+  url = ../$relative_path
   fetch = +refs/remotes/*:refs/heads/*
 " >> config
 # Make trunk the default branch
