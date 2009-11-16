@@ -9,14 +9,14 @@ then
    find . -mindepth 1 -maxdepth 2 -type d -name \*.git-svn | while read dir
    do
 	   pushd $dir 
-	   git svn fetch -q 
+	   git svn fetch -q || exit 1
 	   popd 
    done
 
    find . -mindepth 1 -maxdepth 2 -type d -name \*?.git| while read dir
    do
 	   pushd $dir 
-	   git fetch -q 
+	   git fetch -q || exit 1
 	   git --bare update-server-info
 	   popd 
    done
