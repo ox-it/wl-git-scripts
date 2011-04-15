@@ -26,6 +26,7 @@ mkdir -p $project
 cd $project
 git --bare init --shared
 touch git-daemon-export-ok
+chgrp git-users -R .
 echo Updating project list....
 update-project-list
 
