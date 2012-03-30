@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash 
 # Script to mirror an SVN project in git.
 
 svn_url=$1
@@ -12,6 +12,17 @@ if [ -z "$2" ]; then
 else
 	basename_prefix="$2"
 fi
+
+#Make sure we have a trailing / on he URL
+[[ $svn_url != */ ]] && 1="$svn_url"/
+
+# Check if it looks like a standard repo
+svn ls $svn_url > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo Does not appear to be a svn repository $svn_url
+	exit 1
+fi
+
 
 gitsvn_basename="${basename_prefix}.git-svn"
 git_basename="${basename_prefix}.git"
@@ -33,8 +44,17 @@ if [ -d $git_basename ]; then
 	exit 1
 fi
 
-# Should check it's standard layout if git doesn't and bail
-git svn clone -s $1 ${gitsvn_basename}-new
+svn ls ${svn_url}trunk > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+	opts="-s"
+fi
+
+
+# Now bail if anything fails
+set -e
+
+git svn clone $opts $svn_url ${gitsvn_basename}-new
+
 mv ${gitsvn_basename}-new $gitsvn_basename
 pushd $gitsvn_basename
 src_url=$(git config --get svn-remote.svn.url)
