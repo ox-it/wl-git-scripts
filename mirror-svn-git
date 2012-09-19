@@ -14,7 +14,7 @@ else
 fi
 
 #Make sure we have a trailing / on he URL
-[[ $svn_url != */ ]] && 1="$svn_url"/
+(echo "$svn_url" |grep '/$') >/dev/null || svn_url="${svn_url}/"
 
 # Check if it looks like a standard repo
 svn ls $svn_url > /dev/null 2>&1
