@@ -52,8 +52,11 @@ fi
 
 # Now bail if anything fails
 set -e
-
-git svn clone $opts $svn_url ${gitsvn_basename}-new
+if [ -d ${gitsvn_basename}-new ]; then
+	(cd ${gitsvn_basename}-new; git svn fetch)
+else 
+	git svn clone $opts $svn_url ${gitsvn_basename}-new
+fi
 
 mv ${gitsvn_basename}-new $gitsvn_basename
 pushd $gitsvn_basename
