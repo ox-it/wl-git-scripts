@@ -13,8 +13,8 @@ else
 	basename_prefix="$2"
 fi
 
-#Make sure we have a trailing / on he URL
-[[ $svn_url != */ ]] && 1="$svn_url"/
+# Make sure we have a trailing / on he URL
+[[ $svn_url != */ ]] && svn_url="$svn_url"/
 
 # Check if it looks like a standard repo
 svn ls $svn_url > /dev/null 2>&1
@@ -27,7 +27,7 @@ fi
 gitsvn_basename="${basename_prefix}.git-svn"
 git_basename="${basename_prefix}.git"
 
-git_root=~git/repos
+git_root=${HOME}/repos
 mirror_root=$git_root/mirror
 local_version_root=$git_root/local-version
 if [ ! -d $mirror_root ]; then
