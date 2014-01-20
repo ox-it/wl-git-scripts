@@ -9,6 +9,7 @@ lockfile=.`basename $0`.lock
 if ( set -o noclobber; echo "$$" > "$lockfile") 2> /dev/null; 
 then
    trap 'stat=$?; rm -f "$lockfile"; exit $stat' EXIT
+   # Pull down new changes from svn
    find . -mindepth 1 -maxdepth 2 -type d -name \*.git-svn | while read dir
    do
 	   pushd $dir 
@@ -16,13 +17,9 @@ then
 	   popd 
    done
 
-   find . -mindepth 1 -maxdepth 2 -type d -name \*?.git| while read dir
-   do
-	   pushd $dir 
-	   git fetch -q
-	   git --bare update-server-info || exit 1
-	   popd 
-   done
+   # Push changes to github
+   ~/bin/github-sync
+
 else
    echo "Failed to acquire lockfile: $lockfile" 
    echo "Held by PID: $(cat $lockfile)"

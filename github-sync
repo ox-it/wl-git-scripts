@@ -1,0 +1,17 @@
+#!/bin/bash
+# This finds all repositories that should be pushed to github and
+# gives them a kick.
+
+set -x
+
+cd ~/repos/mirror
+
+   # Update the github versions
+   find . -mindepth 1 -maxdepth 2 -type d -name \*?.git | while read dir
+   do
+	   pushd $dir 
+           git fetch origin
+	   ~/bin/github-update
+	   popd 
+	 sleep 5
+   done

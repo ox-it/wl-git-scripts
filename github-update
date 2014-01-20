@@ -1,0 +1,36 @@
+#!/bin/bash
+# This pushes a repository to github.
+# It needs credentials in ~/.netrc
+
+dir=$(basename $(pwd))
+repo=$(basename $dir .git)
+
+
+function create-repo {
+	# -f Fail silently on errors
+	# -I HEAD request
+	# -n use .netrc for user/pass
+	curl -f -v -I -n  https://api.github.com/repos/sakai-mirror/$1
+	if [ $? -ne 0 ]; then
+		curl  -v -n  -d "{\"name\": \"$1\", \"has_issues\": false, \"has_wiki\": false, \"has_downloads\":false }" https://api.github.com/orgs/sakai-mirror/repos || (echo Failed to create repo; exit 1)
+	fi
+}
+# -n Don't query the remotes
+# This doesn't work as it assumes github is a remote URL
+# git remote show -n github 2>/dev/null 
+git remote show -n | grep -ql "^github"
+
+# This assumes that the the current directory ends .git
+
+if [ $? -ne 0 ]; then 
+	create-repo $repo
+	git remote add github git@github.com:sakai-mirror/$repo.git
+fi
+git push --force --all github
+
+if [ $? -ne 0 ]; then
+	create-repo $repo
+	git push --force --all github || exit 1
+fi
+
+	
